@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="POC da área de relatórios do CRM MídiaCarros">
+  <title>Relatórios | MídiaCarros CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
+  <script src="assets/js/data.js" defer></script><script src="assets/js/app.js" defer></script>
+</head>
+<body>
+  <header class="mc-navbar">
+    <div class="mc-navbar__left">
+      <a class="mc-logo" href="#top" aria-label="MídiaCarros — início"><span class="mc-logo__mark">M</span><span class="mc-logo__name">Mídia<strong>Carros</strong></span><small>Versão: b2a290e</small></a>
+      <button class="mc-action mc-action--tutorial" type="button" data-demo="Área de tutoriais — demonstração da POC"><span class="mc-action__icon" aria-hidden="true">▶</span>Tutoriais</button>
+      <button class="mc-action mc-action--support" type="button" data-demo="Canal de suporte — demonstração da POC"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3a8.5 8.5 0 0 0-7.3 12.9L3.6 20l4.2-1.1A8.5 8.5 0 1 0 12 3Zm4.3 11.9c-.2.6-1.2 1.1-1.7 1.2-.5.1-1.2.1-1.9-.1-.5-.2-1.2-.4-2.1-.8-3.6-1.6-5.9-5.2-6.1-5.4-.2-.2-1.5-2-.1-3.8.4-.5.8-.6 1.1-.6h.8c.2 0 .5.1.6.5l.8 2c.1.4.1.6-.1.8l-.6.7c-.2.2-.4.4-.2.7.2.4.8 1.3 1.8 2.1 1.2 1.1 2.3 1.4 2.6 1.6.3.1.5.1.7-.1l.9-1.1c.2-.3.5-.3.8-.2l2 .9c.4.2.6.3.7.5.1.2.1.6 0 1.1Z"/></svg>Suporte</button>
+    </div>
+    <div class="mc-navbar__right">
+      <div class="mc-account"><span>Usuário: Eric Rosa</span><div class="mc-store"><button class="mc-store__trigger" id="storeTrigger" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="mc-store__avatar">EWR</span><strong id="storeName">EWR Motors</strong><svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7 5 5 5-5"/></svg></button><div class="mc-store__menu" id="storeMenu" role="listbox" aria-label="Selecionar loja"><button role="option" aria-selected="true">EWR Motors</button><button role="option">Prime Motors</button><button role="option">Loja de demonstração</button></div></div></div>
+      <button class="mc-icon-button" type="button" aria-label="Configurações" data-demo="Configurações — demonstração da POC"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></svg></button>
+      <span class="mc-divider" aria-hidden="true"></span>
+      <button class="mc-icon-button" type="button" aria-label="Ajuda" data-demo="Central de ajuda — demonstração da POC"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.6 2.6 0 1 1 4.3 2c-1.1.8-1.8 1.2-1.8 2.5M12 17.4v.1"/></svg></button>
+    </div>
+  </header>
+  <main class="main" id="top">
+    <header class="topbar">
+      <div><h1>Relatórios</h1><p>Acompanhe o desempenho comercial da sua loja e transforme os dados do CRM em decisões.</p></div>
+      <div class="top-actions"><span class="updated">Atualizado em<br><strong>15/07/2026, 10:42</strong></span><button class="primary" id="exportBtn">↧ Exportar relatório</button></div>
+    </header>
+    <nav class="tabs" aria-label="Categorias dos relatórios">
+      <button class="active" data-tab="overview">Visão geral</button><button data-tab="commercial">Comercial</button><button data-tab="agents">Atendentes</button><button data-tab="vehicles">Veículos</button><button data-tab="clients">Clientes</button><button data-tab="quality">Qualidade dos dados</button>
+    </nav>
+    <section class="filter-wrap">
+      <div class="filter-head"><div><strong>Filtros globais</strong><span class="badge" id="filterCount">0 ativos</span></div><button class="text-btn mobile-filter" id="filterToggle">☷ Ajustar filtros</button></div>
+      <form class="filters" id="filters"><label>Período<select id="period"><option value="30">Últimos 30 dias</option><option value="7">Últimos 7 dias</option><option value="1">Hoje</option><option value="60">Mês passado</option><option value="365">Este ano</option></select></label><label>Atendente<select id="agent"><option value="">Todos</option></select></label><label>Origem<select id="source"><option value="">Todas</option></select></label><label>Status<select id="status"><option value="">Todos</option></select></label><label>Resultado<select id="result"><option value="">Todos</option><option>Venda</option><option>Não fechou</option><option>Em negociação</option><option>Sem resposta</option></select></label><button type="button" class="secondary more" id="moreFilters">＋ Mais filtros</button><button type="reset" class="text-btn">Limpar</button><button class="primary" type="submit">Aplicar filtros</button></form>
+    </section>
+
+    <div id="content" aria-live="polite">
+      <section class="tab-panel active" data-panel="overview">
+        <div class="section-title"><div><span class="eyebrow">RESUMO EXECUTIVO</span><h2>Desempenho do período</h2></div><span id="recordCount"></span></div>
+        <div class="kpis" id="kpis"></div>
+        <div class="grid two"><article class="card chart-card"><div class="card-head"><div><h3>Evolução de leads e vendas</h3><p>Comparativo de volume no período</p></div><div class="segmented" data-chart="trend"><button class="active" data-grain="day">Dia</button><button data-grain="week">Semana</button><button data-grain="month">Mês</button></div></div><canvas id="trendChart"></canvas></article><article class="card chart-card"><div class="card-head"><div><h3>Evolução do valor vendido</h3><p id="salesTotal"></p></div><span class="positive">↑ 8,4%</span></div><canvas id="salesChart"></canvas></article></div>
+        <div class="grid two uneven"><article class="card"><div class="card-head"><div><h3>Funil comercial</h3><p>Avanço e perda por etapa</p></div></div><div id="funnel" class="funnel"></div></article><article class="card"><div class="card-head"><div><h3>Desempenho por origem</h3><p>Leads e conversão por canal</p></div></div><canvas id="sourceChart"></canvas></article></div>
+        <section class="insights"><div class="section-title"><div><span class="eyebrow">LEITURA AUTOMÁTICA</span><h2>Insights do período</h2><p>Interpretações calculadas a partir dos dados exibidos.</p></div></div><div class="insight-grid" id="insights"></div></section>
+      </section>
+
+      <section class="tab-panel" data-panel="commercial"><div class="section-title"><div><span class="eyebrow">JORNADA COMERCIAL</span><h2>Tempo e produtividade</h2></div></div><div class="mini-kpis" id="productivity"></div><div class="grid two"><article class="card"><h3>Mapa de calor de entrada de leads</h3><p>Volume por dia da semana e horário</p><div class="heatmap" id="heatmap"></div></article><article class="card"><h3>Faixas de valor procuradas</h3><p>Leads e vendas por faixa</p><canvas id="rangeChart"></canvas></article></div><article class="card table-card"><div class="card-head"><div><h3>Desempenho por origem</h3><p>Eficiência comercial dos canais</p></div></div><div class="table-scroll"><table><thead><tr><th>Origem</th><th>Leads</th><th>Vendas</th><th>Conversão</th><th>Valor vendido</th><th>Ticket médio</th></tr></thead><tbody id="sourceTable"></tbody></table></div></article></section>
+
+      <section class="tab-panel" data-panel="agents"><div class="section-title"><div><span class="eyebrow">EQUIPE</span><h2>Desempenho dos atendentes</h2><p>Indicadores individuais e acompanhamento da carteira.</p></div><label>Ordenar por <select id="agentSort"><option value="sales">Vendas</option><option value="conversion">Conversão</option><option value="value">Valor vendido</option><option value="ticket">Ticket médio</option></select></label></div><article class="card table-card"><div class="table-scroll"><table><thead><tr><th># / Atendente</th><th>Leads</th><th>Vendas</th><th>Conversão</th><th>Valor vendido</th><th>Ticket médio</th><th>Em andamento</th><th>Vencidos</th><th>Tempo até venda</th></tr></thead><tbody id="agentTable"></tbody></table></div></article></section>
+
+      <section class="tab-panel" data-panel="vehicles"><div class="section-title"><div><span class="eyebrow">DEMANDA</span><h2>Interesse por veículos</h2></div></div><div class="grid two"><article class="card table-card"><h3>Veículos do estoque mais procurados</h3><div class="table-scroll"><table><thead><tr><th>Veículo</th><th>Interessados</th><th>Vendas</th><th>Conversão</th><th>Valor vendido</th></tr></thead><tbody id="vehicleTable"></tbody></table></div></article><article class="card"><h3>Outros veículos procurados</h3><p>Os nomes digitados livremente foram agrupados por similaridade para melhorar a leitura dos dados.</p><div id="otherVehicles" class="rank-list"></div></article></div><article class="card"><h3>Veículos oferecidos na troca</h3><p>Dados agrupados por similaridade, pois o campo permite texto livre.</p><div class="trade-grid" id="tradeVehicles"></div></article></section>
+
+      <section class="tab-panel" data-panel="clients"><div class="section-title"><div><span class="eyebrow">PÚBLICO</span><h2>Perfil dos clientes</h2></div></div><div class="grid three"><article class="card"><h3>Perfis de interesse</h3><canvas id="profileChart"></canvas></article><article class="card"><h3>Faixa etária</h3><canvas id="ageChart"></canvas></article><article class="card"><h3>Principais cidades</h3><canvas id="cityChart"></canvas></article></div><article class="card table-card"><h3>Localização dos leads</h3><div class="table-scroll"><table><thead><tr><th>Cidade</th><th>Leads</th><th>Vendas</th><th>Conversão</th><th>Valor vendido</th></tr></thead><tbody id="cityTable"></tbody></table></div></article></section>
+
+      <section class="tab-panel" data-panel="quality"><div class="quality-hero"><div class="quality-score"><div class="ring"><strong>68%</strong><span>qualidade</span></div><div><span class="eyebrow">QUALIDADE GERAL</span><h2>Atenção</h2><p>Alguns campos importantes precisam ser completados para melhorar seus relatórios.</p></div></div><button class="primary" data-quality="Todos os campos">Completar cadastros</button></div><div class="quality-grid" id="qualityGrid"></div><div class="grid two"><article class="card"><h3>Preenchimento de perfil</h3><canvas id="qualityChart"></canvas></article><article class="card quality-guide"><h3>Critérios de classificação</h3><p><i class="green"></i> Acima de 90% <strong>Excelente</strong></p><p><i class="blue"></i> De 75% a 90% <strong>Boa</strong></p><p><i class="orange"></i> De 60% a 75% <strong>Atenção</strong></p><p><i class="red"></i> Abaixo de 60% <strong>Dados insuficientes</strong></p></article></div></section>
+    </div>
+  </main>
+  <aside class="drawer" id="drawer" aria-hidden="true"><div class="drawer-head"><div><span class="eyebrow">PENDÊNCIAS</span><h2 id="drawerTitle">Leads com dados incompletos</h2></div><button class="icon-btn" id="closeDrawer" aria-label="Fechar painel">×</button></div><p>Lista fictícia para demonstração. A edição não está disponível nesta POC.</p><div class="table-scroll"><table><thead><tr><th>Lead</th><th>Atendente</th><th>Contato</th><th>Campo pendente</th><th>Status</th></tr></thead><tbody id="drawerTable"></tbody></table></div></aside>
+  <div class="toast" id="toast" role="status">✓ Relatório preparado com sucesso</div>
+</body></html>
