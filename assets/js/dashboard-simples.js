@@ -20,8 +20,7 @@ function metrics(items){
   const completed=items.filter(lead=>lead.visitCompleted&&inRange(lead.visitDate,filters.start,filters.end));
   const sold=items.filter(lead=>lead.status==='Venda'&&inRange(lead.saleDate,filters.start,filters.end));
   const revenue=sold.reduce((sum,lead)=>sum+lead.saleValue,0);
-  const saleDays=sold.map(lead=>(new Date(lead.saleDate)-new Date(lead.contact))/86400000);
-  return {leads:leads.length,scheduled:scheduled.length,visitsCompleted:completed.length,sales:sold.length,revenue,conversion:divide(sold.length,leads.length),ticket:sold.length?revenue/sold.length:0,averageDays:saleDays.length?saleDays.reduce((a,b)=>a+b,0)/saleDays.length:null};
+  return {leads:leads.length,scheduled:scheduled.length,visitsCompleted:completed.length,sales:sold.length,revenue,conversion:divide(sold.length,leads.length),ticket:sold.length?revenue/sold.length:0};
 }
 function cohort(items){
   const leads=items.filter(lead=>inRange(lead.contact,filters.start,filters.end));
@@ -34,17 +33,17 @@ function rowStats(key){
 
 function renderKpis(){
   const s=metrics(scopedLeads());
+  const periodLeadSales=scopedLeads().filter(lead=>lead.status==='Venda'&&inRange(lead.contact,filters.start,filters.end)&&inRange(lead.saleDate,filters.start,filters.end)).length;
   const cards=[
-    ['Número de leads',s.leads,'◎','#2878d0','Leads cuja data do contato está dentro do período.'],
-    ['Visitas agendadas',s.scheduled,'◷','#6a5acd','Visitas cuja data de agendamento está dentro do período.'],
-    ['Visitas realizadas',s.visitsCompleted,'✓','#198754','Visitas marcadas como realizadas cuja data da visita está dentro do período.'],
-    ['Vendas',s.sales,'◆','#198754','Vendas cuja data da venda está dentro do período.'],
-    ['Taxa de conversão',pct(s.conversion),'↗','#198754','Quantidade de vendas dividida pela quantidade de leads do período.'],
-    ['Faturamento',brl(s.revenue),'R$','#198754','Soma dos valores finais das vendas registradas no período.'],
-    ['Ticket médio',brl(s.ticket),'◇','#6a5acd','Faturamento dividido pela quantidade de vendas do período.'],
-    ['Tempo médio de venda',s.averageDays===null?'Sem dados':`${s.averageDays.toLocaleString('pt-BR',{maximumFractionDigits:1})} dias`,'◴','#e78a18','Média de dias entre o primeiro contato e a venda, considerando as vendas do período.']
+    ['leads','Número de leads',s.leads,'◎','#2878d0'],
+    ['scheduledVisitsPeriod','Visitas agendadas no período',s.scheduled,'◷','#6a5acd'],
+    ['completedVisitsPeriod','Visitas realizadas no período',s.visitsCompleted,'✓','#198754'],
+    ['sales','Vendas dos leads do período',periodLeadSales,'◆','#198754'],
+    ['generalConversion','Conversão geral do período',pct(s.conversion),'↗','#198754'],
+    ['periodRevenue','Faturamento no período',brl(s.revenue),'R$','#198754'],
+    ['periodAverageTicket','Ticket médio do período',brl(s.ticket),'◇','#6a5acd']
   ];
-  $('#kpis').innerHTML=cards.map(([name,value,icon,color,tip])=>`<article class="kpi" style="--accent:${color}"><div class="kpi-top"><span>${name}</span><button class="kpi-info" type="button" title="${tip}" aria-label="Como é calculado: ${tip}">ⓘ</button></div><strong>${value}</strong><span class="kpi-icon" aria-hidden="true">${icon}</span></article>`).join('');
+  $('#kpis').innerHTML=cards.map(([key,name,value,icon,color])=>`<article class="kpi" style="--accent:${color}"><div class="kpi-top"><span>${name}</span><button class="kpi-info" type="button" data-business-rule="${key}" title="Ver regra de negócio" aria-label="Ver regra de negócio de ${name}"><span aria-hidden="true">i</span></button></div><strong>${value}</strong><span class="kpi-icon" aria-hidden="true">${icon}</span></article>`).join('');
 }
 function renderFunnel(){
   const c=cohort(scopedLeads()), stages=[['Leads',c.leads,100,100],['Visitas agendadas',c.scheduled,divide(c.scheduled,c.leads),divide(c.scheduled,c.leads)],['Visitas realizadas',c.completed,divide(c.completed,c.scheduled),divide(c.completed,c.leads)],['Vendas',c.sales,divide(c.sales,c.completed),divide(c.sales,c.leads)]];
