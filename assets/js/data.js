@@ -24,6 +24,18 @@ const DB = (() => {
       currentIndex++;
     });
   });
+  // Coortes determinísticas dos três meses completos anteriores. Elas permitem
+  // demonstrar conversões no mesmo mês e em meses posteriores ao contato.
+  [3,2,1].forEach((monthOffset,monthIndex)=>{
+    Array.from({length:12},(_,position)=>{
+      const contact=new Date(currentYear,currentMonth-monthOffset,2+position*2,12);
+      const sold=position<5;
+      const saleMonthOffset=position<3?0:1+(position%2);
+      const saleDate=sold?new Date(contact.getFullYear(),contact.getMonth()+saleMonthOffset,contact.getDate()+3,12):null;
+      const id=leads.length+1;
+      leads.push({id,name:`Coorte ${first[(id+monthIndex)%first.length]} ${last[(id+position)%last.length]} ${id}`,agent:agents[(position+monthIndex)%agents.length],source:sources[(position*2+monthIndex)%sources.length],status:sold?'Venda':statuses[[2,4,0,3,7,8][position%6]],city:cities[(position+monthIndex)%cities.length],state:'RS',vehicle:vehicles[(position+monthIndex)%vehicles.length],profile:profiles[(position+2)%profiles.length],range:ranges[(position+4)%ranges.length],contact:contact.toISOString(),birth:`${1983+position}-${String(1+position%9).padStart(2,'0')}-12`,saleDate:saleDate?.toISOString()||'',saleValue:sold?prices[(position+monthIndex)%prices.length]:0,overdue:!sold&&position%4===0,other:['Maverick','Landau','Opala SS','F-250'][position%4],trade:['Volkswagen Gol','Fiat Uno','Chevrolet Onix','Hyundai HB20'][position%4]});
+    });
+  });
   // Campos complementares usados pelo dashboard simplificado. A geração é
   // determinística e preserva todos os dados originais da POC completa.
   leads.forEach((lead,i)=>{

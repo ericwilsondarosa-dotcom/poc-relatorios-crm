@@ -1,0 +1,22 @@
+.agent-conversion-title{margin-top:30px;margin-bottom:12px;align-items:flex-start}
+.agent-conversion-title h3{margin:3px 0;font-size:19px}
+.agent-conversion-title small{display:block;margin-top:6px;color:var(--muted);font-size:13px}
+.agent-conversion-card{margin-top:0;padding:16px 20px}
+.agent-conversion-card .table-scroll{margin-top:0;overflow-x:auto}
+.agent-conversion-table{width:100%;min-width:680px;table-layout:fixed}
+.agent-conversion-table th,.agent-conversion-table td{height:40px;padding:9px 12px;vertical-align:middle;font-size:13px}
+.agent-conversion-table thead th{height:44px;padding-top:9px;padding-bottom:9px;background:#f7f7fa;font-size:12px;font-weight:600}
+.agent-conversion-table thead th:nth-child(1){width:25%;text-align:left}
+.agent-conversion-table thead th:nth-child(2){width:23%;text-align:left}
+.agent-conversion-table thead th:nth-child(3),.agent-conversion-table thead th:nth-child(4){width:12%;text-align:right}
+.agent-conversion-table thead th:nth-child(5){width:18%;text-align:right}
+.agent-conversion-table tbody td:nth-of-type(1){width:23%;text-align:left;font-weight:500;text-transform:capitalize}
+.agent-conversion-table tbody td:nth-of-type(2),.agent-conversion-table tbody td:nth-of-type(3){width:12%;text-align:right;font-variant-numeric:tabular-nums}
+.agent-conversion-table tbody td:nth-of-type(4){width:18%;text-align:right;font-variant-numeric:tabular-nums}
+.agent-conversion-table th[scope="rowgroup"]{min-width:170px;padding-left:16px;vertical-align:middle;background:#f7f5fc;color:var(--purple);border-left:3px solid #6d55c7;font-size:14px;font-weight:700;text-transform:none;letter-spacing:0}
+.agent-conversion-table .agent-month-group-start>*{border-top:2px solid #d8d4e8}
+.agent-conversion-table tbody tr:first-child>*{border-top:0}
+.agent-conversion-table .agent-group-1 td{background:#fdfcff}
+.agent-conversion-table tbody tr:hover td{background:#faf9fd}
+.agent-conversion-rate{display:inline-block;padding:3px 8px;border-radius:999px;background:#f0edfa;color:#33216e;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.35}
+@media(max-width:560px){.agent-conversion-title{margin-top:24px}.agent-conversion-title h3{font-size:18px}.agent-conversion-card{padding:12px}.agent-conversion-table{min-width:680px}.agent-conversion-table th,.agent-conversion-table td{font-size:13px}}

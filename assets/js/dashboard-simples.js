@@ -33,17 +33,23 @@ function rowStats(key){
 
 function renderKpis(){
   const s=metrics(scopedLeads());
-  const periodLeadSales=scopedLeads().filter(lead=>lead.status==='Venda'&&inRange(lead.contact,filters.start,filters.end)&&inRange(lead.saleDate,filters.start,filters.end)).length;
   const cards=[
     ['leads','Número de leads',s.leads,'◎','#2878d0'],
     ['scheduledVisitsPeriod','Visitas agendadas no período',s.scheduled,'◷','#6a5acd'],
     ['completedVisitsPeriod','Visitas realizadas no período',s.visitsCompleted,'✓','#198754'],
-    ['sales','Vendas dos leads do período',periodLeadSales,'◆','#198754'],
-    ['generalConversion','Conversão geral do período',pct(s.conversion),'↗','#198754'],
+    ['periodSales','Vendas realizadas no período',s.sales,'◆','#198754'],
     ['periodRevenue','Faturamento no período',brl(s.revenue),'R$','#198754'],
     ['periodAverageTicket','Ticket médio do período',brl(s.ticket),'◇','#6a5acd']
   ];
   $('#kpis').innerHTML=cards.map(([key,name,value,icon,color])=>`<article class="kpi" style="--accent:${color}"><div class="kpi-top"><span>${name}</span><button class="kpi-info" type="button" data-business-rule="${key}" title="Ver regra de negócio" aria-label="Ver regra de negócio de ${name}"><span aria-hidden="true">i</span></button></div><strong>${value}</strong><span class="kpi-icon" aria-hidden="true">${icon}</span></article>`).join('');
+}
+function previousCompleteMonths(reference=new Date()){
+  return [3,2,1].map(offset=>{const date=new Date(reference.getFullYear(),reference.getMonth()-offset,1,12);return {year:date.getFullYear(),month:date.getMonth(),key:`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}`,label:new Intl.DateTimeFormat('pt-BR',{month:'long',year:'numeric'}).format(date)}});
+}
+function renderQuarterlyConversion(){
+  const items=scopedLeads().filter(lead=>lead.contact);
+  const rows=previousCompleteMonths().map(month=>{const leads=items.filter(lead=>dateKey(lead.contact).startsWith(month.key)),converted=leads.filter(lead=>lead.status==='Venda'&&lead.saleDate).length;return {...month,leads:leads.length,converted,rate:divide(converted,leads.length)}});
+  $('#quarterlyConversionCards').innerHTML=rows.map(row=>`<article class="monthly-conversion-card"><h3>${row.label}</h3><strong>${pct(row.rate)}</strong><span>Taxa de conversão</span><p><b>${row.converted}</b> convertidos de <b>${row.leads}</b> leads</p><div class="monthly-conversion-card__track" aria-label="${pct(row.rate)} de conversão"><i style="width:${Math.min(100,row.rate)}%"></i></div></article>`).join('');
 }
 function renderFunnel(){
   const c=cohort(scopedLeads()), stages=[['Leads',c.leads,100,100],['Visitas agendadas',c.scheduled,divide(c.scheduled,c.leads),divide(c.scheduled,c.leads)],['Visitas realizadas',c.completed,divide(c.completed,c.scheduled),divide(c.completed,c.leads)],['Vendas',c.sales,divide(c.sales,c.completed),divide(c.sales,c.leads)]];
@@ -52,7 +58,12 @@ function renderFunnel(){
 }
 function renderAgents(){
   const sort=$('#agentSort').value, rows=rowStats('agent').sort((a,b)=>b[sort]-a[sort]);
-  $('#agentTable').innerHTML=rows.map(row=>`<tr><td><strong>${row.name}</strong></td><td>${row.leads}</td><td>${row.scheduled}</td><td>${row.visitsCompleted}</td><td>${row.sales}</td><td>${pct(row.conversion)}</td><td>${brl(row.revenue)}</td><td>${brl(row.ticket)}</td></tr>`).join('')||'<tr><td colspan="8">Sem dados para o período.</td></tr>';
+  $('#agentTable').innerHTML=rows.map(row=>`<tr><td><strong>${row.name}</strong></td><td>${row.leads}</td><td>${row.scheduled}</td><td>${row.visitsCompleted}</td><td>${row.sales}</td><td>${brl(row.revenue)}</td><td>${brl(row.ticket)}</td></tr>`).join('')||'<tr><td colspan="7">Sem dados para o período.</td></tr>';
+  renderAgentConversion();
+}
+function renderAgentConversion(){
+  const months=previousCompleteMonths(),agents=filters.agent?[filters.agent]:DB.agents;
+  $('#agentConversionTable').innerHTML=agents.map((agent,agentIndex)=>months.map((month,index)=>{const leads=DB.leads.filter(lead=>lead.agent===agent&&lead.contact&&dateKey(lead.contact).startsWith(month.key)),sales=leads.filter(lead=>lead.status==='Venda'&&lead.saleDate).length;return `<tr class="${index===0?'agent-month-group-start':''} agent-group-${agentIndex%2}">${index===0?`<th scope="rowgroup" rowspan="3">${agent}</th>`:''}<td>${month.label}</td><td>${leads.length}</td><td>${sales}</td><td><span class="agent-conversion-rate">${pct(divide(sales,leads.length))}</span></td></tr>`}).join('')).join('');
 }
 function chart(id,key,config){
   if(charts[key]){charts[key].destroy();charts[key]=null}
@@ -72,7 +83,7 @@ function renderSources(){
 }
 function render(){
   $('#periodLabel').textContent=`Período analisado: ${formatDate(filters.start)} a ${formatDate(filters.end)}`;
-  renderKpis();renderFunnel();renderAgents();renderFinance();renderSources();
+  renderKpis();renderQuarterlyConversion();renderFunnel();renderAgents();renderFinance();renderSources();
 }
 function setCurrentMonth(){const dates=currentMonth();$('#startDate').value=dates.start;$('#endDate').value=dates.end;$('#agent').value='';filters={...dates,agent:''}}
 function applyFilters(){

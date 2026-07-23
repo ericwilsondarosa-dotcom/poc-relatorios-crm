@@ -1,0 +1,18 @@
+.simple-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+.monthly-conversion{margin-top:34px;margin-bottom:0}
+.monthly-conversion__title{align-items:flex-start}
+.monthly-conversion__title>div{max-width:780px}
+.monthly-conversion__heading{display:flex;align-items:center;gap:7px}
+.monthly-conversion__heading h2{margin:0}
+.monthly-conversion__heading .kpi-info{margin:0}
+.monthly-conversion__title small{display:block;margin-top:7px;color:var(--muted);font-size:13px}
+.monthly-conversion__cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.monthly-conversion-card{padding:20px;border:1px solid var(--line);border-radius:12px;background:#fff;box-shadow:0 4px 18px #21145d0a}
+.monthly-conversion-card h3{margin:0;color:var(--purple);font-size:13px;letter-spacing:.7px;text-transform:uppercase}
+.monthly-conversion-card strong{display:block;margin-top:11px;font-size:29px;line-height:1.1}
+.monthly-conversion-card>span{display:block;color:var(--muted);font-size:13px}
+.monthly-conversion-card p{margin:14px 0 8px;color:var(--text);font-size:14px}
+.monthly-conversion-card__track{height:7px;overflow:hidden;border-radius:9px;background:#ebe9f4}
+.monthly-conversion-card__track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--purple2),#198754)}
+@media(max-width:800px){.simple-kpis,.monthly-conversion__cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.simple-kpis,.monthly-conversion__cards{grid-template-columns:1fr}}

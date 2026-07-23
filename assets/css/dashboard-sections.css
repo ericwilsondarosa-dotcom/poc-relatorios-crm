@@ -1,0 +1,15 @@
+section[aria-labelledby="summaryTitle"]+.monthly-conversion,
+.monthly-conversion+.report-section,
+.report-section+.report-section{margin-top:56px}
+
+@media(max-width:1020px){
+  section[aria-labelledby="summaryTitle"]+.monthly-conversion,
+  .monthly-conversion+.report-section,
+  .report-section+.report-section{margin-top:44px}
+}
+
+@media(max-width:560px){
+  section[aria-labelledby="summaryTitle"]+.monthly-conversion,
+  .monthly-conversion+.report-section,
+  .report-section+.report-section{margin-top:36px}
+}
