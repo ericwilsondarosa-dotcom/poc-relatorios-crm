@@ -70,16 +70,23 @@ function chart(id,key,config){
   const canvas=$(`#${id}`);
   if(canvas&&window.Chart) charts[key]=new Chart(canvas,config);
 }
+const barValueLabels=(id,formatter)=>({id,afterDatasetsDraw(chart){const {ctx}=chart,meta=chart.getDatasetMeta(0);meta.data.forEach((bar,index)=>{const value=chart.data.datasets[0].data[index],label=formatter(value);ctx.save();ctx.font='600 12px Inter, sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';const labelWidth=ctx.measureText(label).width,barWidth=Math.abs(bar.x-bar.base),fitsInside=value>0&&barWidth>=labelWidth+24;if(fitsInside){ctx.fillStyle='#fff';ctx.shadowColor='rgba(0,0,0,.25)';ctx.shadowBlur=2;ctx.fillText(label,bar.base+12,bar.y)}else{ctx.fillStyle='#474451';ctx.fillText(label,(value>0?bar.x:bar.base)+6,bar.y)}ctx.restore()})}});
+const financeValueLabels=barValueLabels('financeValueLabels',brl),sourceValueLabels=barValueLabels('sourceValueLabels',value=>`${value} leads`);
 function renderFinance(){
   const rows=rowStats('agent').sort((a,b)=>b.revenue-a.revenue), total=rows.reduce((sum,row)=>sum+row.revenue,0);
   $('#financeTotal').textContent=brl(total);
   $('#financeTable').innerHTML=rows.map(row=>`<tr><td><strong>${row.name}</strong></td><td>${row.sales}</td><td>${brl(row.revenue)}</td><td>${pct(divide(row.revenue,total))}</td><td>${brl(row.ticket)}</td></tr>`).join('')||'<tr><td colspan="5">Sem dados para o período.</td></tr>';
-  chart('financeChart','finance',{type:'bar',data:{labels:rows.map(x=>x.name),datasets:[{label:'Faturamento',data:rows.map(x=>x.revenue),backgroundColor:'#6a5acd',borderRadius:6}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,resizeDelay:180,animation:{duration:250},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${brl(ctx.raw)} • ${pct(divide(ctx.raw,total))}`}}},scales:{x:{beginAtZero:true,ticks:{callback:value=>brl(value)},grid:{color:'#eee'}},y:{grid:{display:false}}}}});
+  chart('financeChart','finance',{type:'bar',data:{labels:rows.map(x=>x.name),datasets:[{label:'Faturamento',data:rows.map(x=>x.revenue),backgroundColor:'#6a5acd',borderRadius:6}]},plugins:[financeValueLabels],options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,resizeDelay:180,animation:{duration:250},layout:{padding:{right:12}},plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{beginAtZero:true,grace:'8%',ticks:{callback:value=>brl(value)},grid:{color:'#eee'}},y:{grid:{display:false}}}}});
 }
 function renderSources(){
-  const rows=rowStats('source').sort((a,b)=>b.revenue-a.revenue);
-  $('#sourceTable').innerHTML=rows.map(row=>`<tr><td><strong>${row.name}</strong></td><td>${row.leads}</td><td>${row.scheduled}</td><td>${row.visitsCompleted}</td><td>${row.sales}</td><td>${pct(row.conversion)}</td><td>${brl(row.revenue)}</td></tr>`).join('')||'<tr><td colspan="7">Sem dados para o período.</td></tr>';
-  chart('sourceSimpleChart','source',{type:'bar',data:{labels:rows.map(x=>x.name),datasets:[{label:'Leads',data:rows.map(x=>x.leads),backgroundColor:'#2878d0',borderRadius:5},{label:'Vendas',data:rows.map(x=>x.sales),backgroundColor:'#198754',borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,resizeDelay:180,animation:{duration:250},plugins:{legend:{labels:{usePointStyle:true}}},scales:{x:{grid:{display:false}},y:{beginAtZero:true,ticks:{precision:0},grid:{color:'#eee'}}}}});
+  const rows=rowStats('source').sort((a,b)=>b.leads-a.leads);
+  $('#sourceTable').innerHTML=rows.map(row=>`<tr><td><strong>${row.name}</strong></td><td>${row.leads}</td><td>${row.scheduled}</td><td>${row.visitsCompleted}</td><td>${row.sales}</td><td>${brl(row.revenue)}</td></tr>`).join('')||'<tr><td colspan="6">Sem dados para o período.</td></tr>';
+  chart('sourceSimpleChart','source',{type:'bar',data:{labels:rows.map(x=>x.name),datasets:[{label:'Leads',data:rows.map(x=>x.leads),backgroundColor:'#6a5acd',borderRadius:6,barPercentage:.72,categoryPercentage:.78}]},plugins:[sourceValueLabels],options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,resizeDelay:180,animation:{duration:250},plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{beginAtZero:true,grace:'8%',ticks:{precision:0},grid:{color:'#eeedf3'}},y:{grid:{display:false}}}}});
+  renderPortalConversion();
+}
+function renderPortalConversion(){
+  const months=previousCompleteMonths(),base=DB.leads.filter(lead=>!filters.agent||lead.agent===filters.agent),portals=DB.sources.map(name=>({name,total:months.reduce((sum,month)=>sum+base.filter(lead=>lead.source===name&&lead.contact&&dateKey(lead.contact).startsWith(month.key)).length,0)})).sort((a,b)=>b.total-a.total||a.name.localeCompare(b.name,'pt-BR'));
+  $('#portalConversionTable').innerHTML=portals.map((portal,portalIndex)=>months.map((month,index)=>{const leads=base.filter(lead=>lead.source===portal.name&&lead.contact&&dateKey(lead.contact).startsWith(month.key)),sales=leads.filter(lead=>lead.status==='Venda'&&lead.saleDate).length;return `<tr class="${index===0?'portal-month-group-start':''} portal-group-${portalIndex%2}">${index===0?`<th scope="rowgroup" rowspan="3">${portal.name}</th>`:''}<td>${month.label}</td><td>${leads.length}</td><td>${sales}</td><td><span class="portal-conversion-rate">${pct(divide(sales,leads.length))}</span></td></tr>`}).join('')).join('');
 }
 function render(){
   $('#periodLabel').textContent=`Período analisado: ${formatDate(filters.start)} a ${formatDate(filters.end)}`;
