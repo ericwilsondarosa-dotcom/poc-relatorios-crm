@@ -82,11 +82,11 @@ function renderSources(){
   const rows=rowStats('source').sort((a,b)=>b.leads-a.leads);
   $('#sourceTable').innerHTML=rows.map(row=>`<tr><td><strong>${row.name}</strong></td><td>${row.leads}</td><td>${row.scheduled}</td><td>${row.visitsCompleted}</td><td>${row.sales}</td><td>${brl(row.revenue)}</td></tr>`).join('')||'<tr><td colspan="6">Sem dados para o período.</td></tr>';
   chart('sourceSimpleChart','source',{type:'bar',data:{labels:rows.map(x=>x.name),datasets:[{label:'Leads',data:rows.map(x=>x.leads),backgroundColor:'#6a5acd',borderRadius:6,barPercentage:.72,categoryPercentage:.78}]},plugins:[sourceValueLabels],options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,resizeDelay:180,animation:{duration:250},plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{beginAtZero:true,grace:'8%',ticks:{precision:0},grid:{color:'#eeedf3'}},y:{grid:{display:false}}}}});
-  renderPortalConversion();
+  renderPortalConversion(rows.map(row=>row.name));
 }
-function renderPortalConversion(){
-  const months=previousCompleteMonths(),base=DB.leads.filter(lead=>!filters.agent||lead.agent===filters.agent),portals=DB.sources.map(name=>({name,total:months.reduce((sum,month)=>sum+base.filter(lead=>lead.source===name&&lead.contact&&dateKey(lead.contact).startsWith(month.key)).length,0)})).sort((a,b)=>b.total-a.total||a.name.localeCompare(b.name,'pt-BR'));
-  $('#portalConversionTable').innerHTML=portals.map((portal,portalIndex)=>months.map((month,index)=>{const leads=base.filter(lead=>lead.source===portal.name&&lead.contact&&dateKey(lead.contact).startsWith(month.key)),sales=leads.filter(lead=>lead.status==='Venda'&&lead.saleDate).length;return `<tr class="${index===0?'portal-month-group-start':''} portal-group-${portalIndex%2}">${index===0?`<th scope="rowgroup" rowspan="3">${portal.name}</th>`:''}<td>${month.label}</td><td>${leads.length}</td><td>${sales}</td><td><span class="portal-conversion-rate">${pct(divide(sales,leads.length))}</span></td></tr>`}).join('')).join('');
+function renderPortalConversion(portalOrder){
+  const months=previousCompleteMonths(),base=DB.leads.filter(lead=>!filters.agent||lead.agent===filters.agent);
+  $('#portalConversionTable').innerHTML=portalOrder.map((portal,portalIndex)=>months.map((month,index)=>{const leads=base.filter(lead=>lead.source===portal&&lead.contact&&dateKey(lead.contact).startsWith(month.key)),sales=leads.filter(lead=>lead.status==='Venda'&&lead.saleDate).length;return `<tr class="${index===0?'portal-month-group-start':''} portal-group-${portalIndex%2}">${index===0?`<th scope="rowgroup" rowspan="3">${portal}</th>`:''}<td>${month.label}</td><td>${leads.length}</td><td>${sales}</td><td><span class="portal-conversion-rate">${pct(divide(sales,leads.length))}</span></td></tr>`}).join('')).join('');
 }
 function render(){
   $('#periodLabel').textContent=`Período analisado: ${formatDate(filters.start)} a ${formatDate(filters.end)}`;
